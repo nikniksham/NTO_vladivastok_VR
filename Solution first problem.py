@@ -317,6 +317,8 @@ def calculate(file):
     if mn_tn == mx_tn or mn_tn > max_t or mx_tn < min_t:
         return "0"
     a = [mn_tn, mx_tn]
+    print(r)
+    print(abs(min(a)-max(a)))
     return f"1 {min(a)} {max(a)}"
 
 
