@@ -112,6 +112,13 @@ def calculate(file):
     u, v, w = u / d, v / d, w / d
     # print(u, v, w)
 
+    ct = -10000
+    t1 = x0 + u * ct + y0 + v * ct + z0 + w * ct
+
+    ct = 10000
+    t2 = x0 + u * ct + y0 + v * ct + z0 + w * ct
+    ch = t1 < t2
+
     points = []
     for edge in edges:
         points.append(get_point_crossing([u, v, w], m0, edge))
@@ -175,9 +182,12 @@ def calculate(file):
     ts2 = list(set(ts2))
     # print(ts2)
 
-    min_t, max_t = min(ts2), max(ts2)
+    if ch:
+        min_t, max_t = min(ts2), max(ts2)
+    else:
+        min_t, max_t = max(ts2), min(ts2)
     mid_t = (min_t + max_t) / 2
-    # print(min_t, mid_t, max_t)
+    # print(min_t, mid_t, max_t, "\n")
 
     # min_t, max_t = min(ts2), max(ts2)
     # mid_t = (min_t + max_t) / 2
@@ -193,8 +203,6 @@ def calculate(file):
             v1 = (u, v, w)
             
             # TODO: Пофиксить плохое вычисление краёв цилиндра в шаре
-
-            # Поправить расчёт, он должен вычисляться с проекцией точки и всеми рёбрами
 
             need = False
             p2 = edge_points[-1]
@@ -235,18 +243,27 @@ def calculate(file):
             ins = False
             if res > 0:
                 ins = True
+            # print(t)
             # print(res)
-            if t < 0 and res > 0 or t > 0 and res < 0:
-                # print("!!!!!")
-                res = -res
+            # print(mid_t >= t >= max_t)
+            # print(t > 0 and res > 0, t < 0 and res < 0, min_t <= t <= mid_t)
+            if ch:
+                if (res > 0 and min_t <= t <= mid_t) or (res < 0 and mid_t <= t <= max_t):
+                    # print("!!!!!")
+                    res = -res
+            else:
+                if (res > 0 and max_t <= t <= mid_t) or (res < 0 and mid_t <= t <= min_t):
+                    # print("!!!!!")
+                    res = -res
             # print(res)
+            # print()
             # print(t - res)
             # print(need)
             # print(t - round(r / tan(asin(u * a + v * b + w * c)), 5))
             if need:
                 # print(t - round(r / tan(asin(u * a + v * b + w * c)), 5))
                 # print(round(t - res, 5))
-                tans.append((round(t - res, 5), ins))
+                tans.append((t - res, ins))
             # print(degrees(asin(u * a + v * b + w * c)))
             # print()
         else:
@@ -260,21 +277,45 @@ def calculate(file):
     # print(list(map(lambda x: min_t <= x[0] <= max_t and x[1], tans)))
     # print(list(map(lambda x: min_t <= x[0] <= max_t and not x[1], tans)))
     # print(len(list(filter(lambda x: x[1], tans))) > 0)
-    a = any(list(map(lambda x: min_t <= x[0] <= max_t and x[1], tans)))
-    b = any(list(map(lambda x: min_t <= x[0] <= max_t and not x[1], tans)))
-    c = len(list(filter(lambda x: x[1], tans))) > 0
-    d = len(list(filter(lambda x: not x[1], tans))) > 0
+    # print(min_t, max_t)
+    # if ch:
+    #     a = any(list(map(lambda x: min_t <= x[0] <= max_t and x[1], tans)))
+    #     b = any(list(map(lambda x: min_t <= x[0] <= max_t and not x[1], tans)))
+    #     # print(1)
+    # else:
+    #     a = any(list(map(lambda x: min_t >= x[0] >= max_t and x[1], tans)))
+    #     b = any(list(map(lambda x: min_t >= x[0] >= max_t and not x[1], tans)))
+    # c = len(list(filter(lambda x: x[1], tans))) > 0
+    # d = len(list(filter(lambda x: not x[1], tans))) > 0
     # print(a, b, c, d, a >= c, b >= d)
     # print(tans)
-    if len(tans) != 0 and not (a >= c and b >= d):
-        return "0"
-    mx_tn, mn_tn = round(max_t, 5), round(min_t, 5)
-    # print(mx_tn, mn_tn)
-    for tn, is_inside in tans:
-        if is_inside and tn < mx_tn:
-            mx_tn = tn
-        elif not is_inside and tn > mn_tn:
-            mn_tn = tn
+    # if len(tans) != 0 and not (a >= c and b >= d):
+    #     return "0"
+
+    # print(tans)
+    if ch:
+        f1, f2 = False, False
+        mx_tn, mn_tn = max_t, min_t
+        for tn, is_inside in tans:
+            if is_inside and tn < mx_tn:
+                f1 = True
+                mx_tn = tn
+            elif not is_inside and tn > mn_tn:
+                f2 = True
+                mn_tn = tn
+        f3 = f1 and f2
+    else:
+        mn_tn, mx_tn = max_t, min_t
+        f1, f2 = False, False
+        # print(mx_tn, mn_tn)
+        for tn, is_inside in tans:
+            if is_inside and tn < mx_tn:
+                f1 = True
+                mx_tn = tn
+            elif not is_inside and tn > mn_tn:
+                f2 = True
+                mn_tn = tn
+        f3 = f1 and f2
     # print(mx_tn, mn_tn, 'adasda')
     # min_p, max_p = min(ps), max(ps)
     # print(min_p, max_p)
@@ -313,14 +354,27 @@ def calculate(file):
     # print()
     # print(mn_tn, mx_tn)
 
-    if mn_tn == mx_tn or mn_tn > max_t or mx_tn < min_t:
+    # if not ch:
+    #     mn_tn, mx_tn = mx_tn, mn_tn
+
+    if not ch:
+        min_t, max_t = max_t, min_t
+
+    # print(tans)
+    # print(ch)
+    # print(mn_tn, mx_tn)
+    # print(min_t, max_t)
+
+    # print(mn_tn, mx_tn, mn_tn > max_t, mx_tn < min_t)
+    if (mn_tn == mx_tn or mn_tn > max_t or mx_tn < min_t) and r != 0:
         return "0"
     a = [mn_tn, mx_tn]
     # print(r)
     # print(abs(min(a)-max(a)))
-    return f"1 {min(a)} {max(a)}"
+    # 1 -0.15892  1.89097
+    return f"1 {round(min(a), 5)} {round(max(a), 5)}"
 
 
-with open("input7.txt", "r") as input_file:
+with open("input4.txt", "r") as input_file:
     with open("output.txt", "w") as output_file:
         output_file.write(calculate(input_file))
