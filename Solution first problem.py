@@ -251,8 +251,9 @@ def calculate(file):
             # print(degrees(asin(u * a + v * b + w * c)))
             # print()
         else:
-            # print(edge)
+            print(edge)
             if r > abs(x0 * a + y0 * b + z0 * c + d):
+                print(123)
                 return "0"
 
     # tans = list(filter(lambda x: x[0] <= max_t if x[1] else x[0] >= min_t, tans))
@@ -265,11 +266,11 @@ def calculate(file):
     c = len(list(filter(lambda x: x[1], tans))) > 0
     d = len(list(filter(lambda x: not x[1], tans))) > 0
     # print(a, b, c, d, a >= c, b >= d)
+    print(tans)
     if len(tans) != 0 and not (a >= c and b >= d):
         return "0"
     mx_tn, mn_tn = round(max_t, 5), round(min_t, 5)
     # print(mx_tn, mn_tn)
-    # print(tans)
     for tn, is_inside in tans:
         if is_inside and tn < mx_tn:
             mx_tn = tn
@@ -319,6 +320,6 @@ def calculate(file):
     return f"1 {min(a)} {max(a)}"
 
 
-with open("input5.txt", "r") as input_file:
+with open("input6.txt", "r") as input_file:
     with open("output.txt", "w") as output_file:
         output_file.write(calculate(input_file))
