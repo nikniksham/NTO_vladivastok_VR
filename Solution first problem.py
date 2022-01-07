@@ -316,9 +316,11 @@ def calculate(file):
     if mn_tn == mx_tn or mn_tn > max_t or mx_tn < min_t:
         return "0"
     a = [mn_tn, mx_tn]
+    print(r)
+    print(abs(min(a)-max(a)))
     return f"1 {min(a)} {max(a)}"
 
 
-with open("input5.txt", "r") as input_file:
+with open("input6.txt", "r") as input_file:
     with open("output.txt", "w") as output_file:
         output_file.write(calculate(input_file))
