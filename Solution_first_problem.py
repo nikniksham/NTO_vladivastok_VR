@@ -375,6 +375,6 @@ def calculate(file):
     return f"1 {round(min(a), 5)} {round(max(a), 5)}"
 
 
-with open("input4.txt", "r") as input_file:
+with open("inputs/input4.txt", "r") as input_file:
     with open("output.txt", "w") as output_file:
         output_file.write(calculate(input_file))

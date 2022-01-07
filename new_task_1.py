@@ -56,6 +56,6 @@ def calculate(input_file):
     return ""
 
 
-with open("input2.txt", "r") as input_file:
+with open("inputs/input2.txt", "r") as input_file:
     with open("output2.txt", "w") as output_file:
         output_file.write(calculate(list(filter(lambda x: x != [], map(lambda l: list(map(float, l.split())), input_file.readlines())))))

@@ -70,6 +70,6 @@ def calculate(input_file):
     return "\n".join(map(str, [len(result)]+result))
 
 
-with open("input.txt", "r") as input_file:
+with open("inputs/input.txt", "r") as input_file:
     with open("output.txt", "w") as output_file:
         output_file.write(calculate(list(map(lambda l: list(map(float, l.split())), input_file.readlines()))))
