@@ -46,13 +46,6 @@ def subtr(p1, p2):
     return [p1[0] - p2[0], p1[1] - p2[1], p1[2] - p2[2]]
 
 
-def get_dist_between_lines(vec, p1, pl1, pl2):
-    u, v, w = vec
-    x0, y0, z0 = p1
-    xl, yl, zl = pl2
-    ul, vl, wl = subtr(pl1, pl2)
-
-
 def get_dist_to_plane(point, edge):
     return (edge[0] * point[0] + edge[1] * point[1] + edge[2] * point[2] + edge[3]) / (edge[0]**2+edge[1]**2+edge[2]**2)**0.5
 
@@ -199,14 +192,14 @@ def calculate(file):
             p1 = (x0, y0, z0)
             v1 = (u, v, w)
             
-            # TODO: Пофиксить плохое вычисление краёв цииндра в шаре
+            # TODO: Пофиксить плохое вычисление краёв цилиндра в шаре
 
             # Поправить расчёт, он должен вычисляться с проекцией точки и всеми рёбрами
 
             need = False
             p2 = edge_points[-1]
             v2 = make_ed(subtr(edge_points[-1], edge_points[0]))
-            norm = vec_multiplication(v1, v2)
+            norm = make_ed(vec_multiplication(v1, v2))
             if abs(plosk_by_point_and_norm(p1, norm, p2)) < r:
                 need = True
 
@@ -214,13 +207,19 @@ def calculate(file):
                 for i in range(len(edge_points) - 1):
                     p2 = edge_points[i]
                     v2 = make_ed(subtr(edge_points[i], edge_points[i + 1]))
-                    norm = vec_multiplication(v1, v2)
+                    norm = make_ed(vec_multiplication(v1, v2))
                     if abs(plosk_by_point_and_norm(p1, norm, p2)) < r:
                         # print(abs(plosk_by_point_and_norm(p1, norm, p2)))
                         # print(123)
                         # print(edge_points[i], edge_points[i + 1])
                         need = True
                         break
+            # if need:
+                # print(edge)
+                # print(p1)
+                # print(v1)
+                # print(edge_points)
+                # return ""
 
             # print(round(r / tan(asin(u * a + v * b + w * c)), 5))
             # if not need:
@@ -253,6 +252,7 @@ def calculate(file):
         else:
             # print(edge)
             if r > abs(x0 * a + y0 * b + z0 * c + d):
+                # print(123)
                 return "0"
 
     # tans = list(filter(lambda x: x[0] <= max_t if x[1] else x[0] >= min_t, tans))
@@ -265,11 +265,11 @@ def calculate(file):
     c = len(list(filter(lambda x: x[1], tans))) > 0
     d = len(list(filter(lambda x: not x[1], tans))) > 0
     # print(a, b, c, d, a >= c, b >= d)
+    # print(tans)
     if len(tans) != 0 and not (a >= c and b >= d):
         return "0"
     mx_tn, mn_tn = round(max_t, 5), round(min_t, 5)
     # print(mx_tn, mn_tn)
-    # print(tans)
     for tn, is_inside in tans:
         if is_inside and tn < mx_tn:
             mx_tn = tn
@@ -316,11 +316,11 @@ def calculate(file):
     if mn_tn == mx_tn or mn_tn > max_t or mx_tn < min_t:
         return "0"
     a = [mn_tn, mx_tn]
-    print(r)
-    print(abs(min(a)-max(a)))
+    # print(r)
+    # print(abs(min(a)-max(a)))
     return f"1 {min(a)} {max(a)}"
 
 
-with open("input6.txt", "r") as input_file:
+with open("input7.txt", "r") as input_file:
     with open("output.txt", "w") as output_file:
         output_file.write(calculate(input_file))
