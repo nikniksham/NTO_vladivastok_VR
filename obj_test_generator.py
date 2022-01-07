@@ -1,4 +1,4 @@
-with open('input6.obj') as r:
+with open('input7.obj') as r:
     vertexes = []
     edges = []
     from_zero = True
