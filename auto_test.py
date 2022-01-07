@@ -1,4 +1,4 @@
-from Solution_first_problem import calculate
+from Rjkzavr import calculate
 
 tests = [
     ['tests/test_1.txt', '1 -0.15892 1.89097'],
@@ -14,7 +14,7 @@ tests = [
     ['tests/test_11.txt', '1 -1.0 -0.9799'],
     ['tests/test_12.txt', '0'],
     ['tests/test_13.txt', '0'],
-    ['tests/test_14.txt', '1 -0.27344 0.27344'],
+    ['tests/test_14.txt', '1 -0.41421 0.41421'],
     ['tests/test_15.txt', '0'],
     ['tests/test_16.txt', '1 -1.0 1.0'],
     ['tests/test_17.txt', '1 -1.00275 1.00275'],
@@ -27,13 +27,24 @@ tests = [
     ['tests/test_24.txt', '0']
 ]
 
-is_only_wrong = False
+is_only_wrong = True
+right = 0
+wrong_tests = []
 
 for i, test in enumerate(tests):
     file, result = test
     with open(file, 'r') as f:
         res = calculate(f)
-    if res == result and not is_only_wrong:
-        print(f'test №{i+1} OK')
+    if res == result:
+        if not is_only_wrong:
+            print(f'test №{i+1} OK')
+        right += 1
     if res != result:
         print(f'\ntest №{i+1} WA\nAnswer: {res}\nTrue:   {result}\n')
+        wrong_tests.append(str(i+1))
+
+print('RESULT:')
+print(f'right    {round(right/len(tests)*100, 1)} % of tests')
+print(f'correct  {right}')
+print(f'wrong    {len(tests) - right}')
+print(f'errors in tests: {" ".join(wrong_tests)}')

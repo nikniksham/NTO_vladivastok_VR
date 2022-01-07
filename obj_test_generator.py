@@ -1,4 +1,4 @@
-with open('inputs/input7.obj') as r:
+with open('stupid.obj') as r:
     vertexes = []
     edges = []
     from_zero = True

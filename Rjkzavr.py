@@ -1,3 +1,4 @@
+from math import tan, asin, sin, acos
 from time import time
 st = time()
 
@@ -12,7 +13,9 @@ plosk_by_point_and_norm = lambda m, n, p: n[0]*(p[0] - m[0]) + n[1]*(p[1] - m[1]
 dist_point_plane = lambda po, pl: po[0]*pl[0] + po[1]*pl[1] + po[2]*pl[2] + pl[3]
 get_d = lambda p1, p2: ((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**0.5
 check_in_figure = lambda point, edges: all([dist_point_plane(point, edge) <= 0 for edge in edges])
-center_figure = lambda vertexes: (sum([x for x, y, z in vertexes])**0.5/len(vertexes), sum([y for x, y, z in vertexes])**0.5/len(vertexes), sum([z for x, y, z in vertexes])**0.5/len(vertexes))
+center_figure = lambda vertexes: (round(sum([x for x, y, z in vertexes])/len(vertexes), 3),
+                                  round(sum([y for x, y, z in vertexes])/len(vertexes), 3),
+                                  round(sum([z for x, y, z in vertexes])/len(vertexes), 3))
 
 
 def make_ed(ver):
@@ -57,7 +60,9 @@ def calculate(file):
         a, b, c = (p1[1] * p2[2] - p1[2] * p2[1]), -(p1[0] * p2[2] - p1[2] * p2[0]), (p1[0] * p2[1] - p1[1] * p2[0])
         a, b, c = make_ed((a, b, c))
         d = -p0[0] * a - p0[1] * b - p0[2] * c
-        if dist_point_plane(center, (a, b, c, d)) > 0:
+        # print(center)
+        # print(dist_point_plane(center, (a, b, c, d)))
+        if int(dist_point_plane(center, (a, b, c, d))) > 0:
             a, b, c, d = -a, -b, -c, -d
         # print(a, b, c)
         edges.append([a, b, c, d, arr])
@@ -85,9 +90,9 @@ def calculate(file):
     #             print(check_in_figure((x, y, z), edges), sep='\t')
     # print(check_in_figure((-1, -1, -1.1), edges), sep='\t')
     # print(check_in_figure((1, 1, 1), edges), sep='\t')
-    # print(check_in_figure((1, 0, 1), edges), sep='\t')
 
     # находим и проверяем все точки пересечения с плоскостями цилиндра
+    inside, outside = 0, 0
     result = []
     for edge in edges:
         ang = scalar(edge[:4], cylinder_vec)
@@ -109,33 +114,44 @@ def calculate(file):
             cross_point = t * cylinder_vec[0] + cylinder_point[0], t * cylinder_vec[1] + cylinder_point[1], t * cylinder_vec[2] + cylinder_point[2]
             if abs(ang) != 1:
                 # тк не перпендикулярно, можем спроецировать прямую в грань и проверить, что точка лежит в фигуре
+                otcl = -edge[0] * cylinder_point[0] + -edge[1] * cylinder_point[1] + -edge[2] * cylinder_point[2] - edge[3]
+                point = [edge[0] * otcl + cylinder_point[0], edge[1] * otcl + cylinder_point[1], edge[2] * otcl + cylinder_point[2]]
+                direction = make_ed(vec_subtraction(point, cross_point))
+                if plosk_by_point_and_norm(cylinder_point, cylinder_vec, cross_point) < 0:
+                    ang = -ang
+                check_point = vec_addition(vec_multiplication_by_const(direction, cylinder_radius / ang), cross_point)
                 # print("Эта штука не перпендикулярна, надо делать проекцию и проверять, что результат в фигуре (на границе)")
                 # print(cross_point, abs(degrees(acos(ang))-90), ang)
-                otcl = -edge[0] * cylinder_point[0] + -edge[1] * cylinder_point[1] + -edge[2] * cylinder_point[2] - edge[3]
                 # print(subtr([-a * otcl + x0, -b * otcl + y0, -c * otcl + z0], point), point)
                 # вторая точка
-                point = [edge[0] * otcl + cylinder_point[0], edge[1] * otcl + cylinder_point[1], edge[2] * otcl + cylinder_point[2]]
                 # print(edge[:4], point)
                 # print(otcl)
+                # print(edge[0] * cross_point[0] + edge[1] * cross_point[1] + edge[2] * cross_point[2] + edge[3])
                 # print(edge[0] * point[0] + edge[1] * point[1] + edge[2] * point[2] + edge[3])
                 # print(cross_point, point)
                 # print(vec_subtraction(point, cross_point))
                 # print(cross_point, edge[:3])
                 # print(cross_point, '???')
-                direction = make_ed(vec_subtraction(point, cross_point))
-                # print(cylinder_radius / sin_ang, sin_ang)
-                check_point = vec_addition(vec_multiplication_by_const(direction, cylinder_radius / abs(ang)), cross_point)
-                # print(direction)
-                # print(vec_multiplication_by_const(direction, cylinder_radius / sin_ang))
-                # print(check_point, ang)
-                # print(plosk_by_point_and_norm(cylinder_point, cylinder_vec, check_point))
+                # print(scalar(cylinder_vec, edge[:3]))
+                # print('out' if scalar(cylinder_vec, edge[:3]) > 0 else 'in')
+                # print(cylinder_radius / ang, ang)
+                # print(direction, ang)
+                # print(vec_multiplication_by_const(direction, cylinder_radius / ang))
+                # print(edge[:3])
+                # print(check_point, plosk_by_point_and_norm(cylinder_point, cylinder_vec, check_point))
+                # for edge in edges:
+                #     print(edge, check_point)
+                #     print(dist_point_plane(check_point, edge))
+                # print(plosk_by_point_and_norm(cylinder_point, cylinder_vec, check_point), check_in_figure(check_point, edges))
                 if check_in_figure(check_point, edges):
+                    # print(check_point)
                     t = round(plosk_by_point_and_norm(cylinder_point, cylinder_vec, check_point), 5)
-                    if t not in result:
-                        # print(t)
-                        result.append(t)
+                    if cylinder_radius / tan(asin(scalar(cylinder_vec, edge[:3]))) > 0:
+                        outside = t
+                    else:
+                        inside = t
             else:
-                print("Эта штука перпендикулярна, надо проверять, что круг влазит в грань")
+                # print("Эта штука перпендикулярна, надо проверять, что круг влазит в грань")
                 good = True
                 for index in range(len(edge[4])):
                     # p1 = cross_point
@@ -153,7 +169,8 @@ def calculate(file):
                         break
                     # print()
                 if not good:
-                    print("Радиус НЕ влез!")
+                    # print("Радиус НЕ влез!")
+                    pass
                 else:
                     x, y, z = cross_point
                     if cylinder_vec[0] != 0:
@@ -168,15 +185,21 @@ def calculate(file):
                         result.append(round(t, 5))
 
     # проверка, что есть точки и вывод итогового ответа
-    # print(result)
-    if len(result) != 0:
+    if len(result) == 2:
         # print(result)
         return '1 ' + ' '.join(map(str, sorted(result)))
+    elif len(result) == 1:
+        return '1 ' + ' '.join(map(str, sorted([result[0], (inside if inside else outside)])))
+    elif len(result) == 0:
+        if inside < outside:
+            return f'1 {inside} {outside}'
+        else:
+            return '0'
     else:
         return '0'
 
 
 if __name__ == '__main__':
-    with open("input.txt", "r") as input_file:
+    with open("inputs/input.txt", "r") as input_file:
         with open("output.txt", "w") as output_file:
             output_file.write(calculate(input_file))
