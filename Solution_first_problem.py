@@ -1,4 +1,4 @@
-from time import time
+"""from time import time
 from math import tan, asin
 st = time()
 
@@ -69,7 +69,6 @@ def get_point_crossing(point, m0, edge):
 
 
 def calculate(file):
-    menshe = False
     count_vertices = int(file.readline())
     vertices = []
     for _ in range(count_vertices):
@@ -117,7 +116,7 @@ def calculate(file):
 
     ct = 10000
     t2 = x0 + u * ct + y0 + v * ct + z0 + w * ct
-    ch = t1 < t2
+    ch = t1 <= t2
 
     points = []
     for edge in edges:
@@ -201,7 +200,7 @@ def calculate(file):
         if point:
             p1 = (x0, y0, z0)
             v1 = (u, v, w)
-            
+
             # TODO: Пофиксить плохое вычисление краёв цилиндра в шаре
 
             need = False
@@ -322,7 +321,10 @@ def calculate(file):
     # print(ts2)
     # print(len(tans), *[tn for tn in tans])
 
-    # print(tans)
+    # xp, yp, zp = x0 + u * t, y0 + v * t, z0 + w * t
+
+    # print(*[[x0 + u * tn[0], y0 + v * tn[0], z0 + w * tn[0]] for tn in tans], sep="\n")
+    print(*edges, sep="\n")
     # print(mn_tn, mx_tn)
     # print(min_t, mid_t, max_t)
     # print()
@@ -375,6 +377,119 @@ def calculate(file):
     return f"1 {round(min(a), 5)} {round(max(a), 5)}"
 
 
-with open("inputs/input4.txt", "r") as input_file:
+with open("inputs/input.txt", "r") as input_file:
     with open("output.txt", "w") as output_file:
-        output_file.write(calculate(input_file))
+        output_file.write(calculate(input_file))"""
+import random
+import time
+
+
+a = {2: {12: [82, 87], 76: [10, 15]}, 5: {59: [4, 16], 95: [6, 12]}, 48: {10: [1, 89], 90: [10, 20]}}
+b = {2: [12, 76], 5: []}
+c = [2, 5]
+
+a2 = [[[0.6259509079872594]], [[0.6506000486323554]], [[-0.8687854511821216]], [[0.5345224838248488], [0.5345224838248488]], [[0.8248628195623472]], [[0.747051912764076]], [[-0.7199308899516877]], [[-0.5492104702344917]], [[0.3505902242092289]]]
+b2 = [[0.16917592107763765], [-0.5530100413375021], [0.44291023001441493], [-0.8017837257372732, -0.8017837257372731], [0.4124314097811736], [0.4909198283878214], [-0.3039708202018237], [0.4429116695439449], [-0.2726812854960669]]
+c2 = [-0.7612916448493695, -0.5204800389058843, -0.22145511500720746, 0.2672612419124244, 0.38665444666985027, 0.4482311476584456, 0.623940104624796, 0.7086586712703119, 0.8959527952013627]
+a_x_min, a_x_max, a_y_min, a_y_max, a_z_min, a_z_max = 3, 50, 1, 48, 2, 95
+
+
+def bin_search_from_to(min_n, max_n, arr, from_id, to_id):
+    min_i, max_i = from_id, to_id
+    b_b, t_b = 0, 0
+    # print(arr)
+    while True:
+        mid_i = (min_i + max_i) // 2
+        # print(min_i, mid_i, max_i)
+        # input()
+        if arr[mid_i] < min_n:
+            min_i = mid_i
+            # print(1)
+        else:  # arr[mid_i] > min_n:
+            if max_i == mid_i:
+                # print(1)
+                b_b = min_i
+                break
+            max_i = mid_i
+        if max_i - min_i == 1:
+            # print(2, arr[min_i], min_n)
+            if arr[min_i] >= min_n:
+                b_b = min_i
+            else:
+                b_b = max_i
+            break
+    min_i, max_i = from_id, to_id
+
+    while True:
+        mid_i = (min_i + max_i) // 2
+        # print(min_i, mid_i, max_i)
+        # input()
+        if arr[mid_i] > max_n:
+            max_i = mid_i
+            # print("gay")
+            # print(1)
+        else:  # arr[mid_i] > min_n:
+            # print("gay again")
+            if min_i == mid_i:
+                # print(1)
+                t_b = max_i
+                break
+            min_i = mid_i
+        if max_i - min_i == 1:
+            # print(2, "!!!!!!!!!!!!!!!!!!!!!1")
+            # print(max_i, arr)
+            if arr[max_i - 1] <= max_n:
+                t_b = max_i
+            else:
+                t_b = min_i
+            break
+
+    # print(b_b, t_b)
+    return b_b, t_b
+
+
+def search_in_z(ind1, ind2, a_z_min, a_z_max):
+    # print(a2[ind1][ind2])
+    z_min, z_max = bin_search_from_to(a_z_min, a_z_max, a2[ind1][ind2], 0, len(a2[ind1][ind2]))
+    # print(z_max - z_min + 1)
+    return z_max - z_min + 1
+
+
+def search_in_y(ind, a_y_min, a_y_max, a_z_min, a_z_max):
+    res = 0
+    y_min, y_max = bin_search_from_to(a_y_min, a_y_max, b2[ind], 0, len(b2[ind]))
+    # print(y_min, y_max, "!!!")
+    for i in range(y_min, y_max):
+        # print(i, "Y")
+        res += search_in_z(ind, i, a_z_min, a_z_max)
+    return res
+
+
+def search_in_x(a_x_min, a_x_max, a_y_min, a_y_max, a_z_min, a_z_max):
+    res = 0
+    x_min, x_max = bin_search_from_to(a_x_min, a_x_max, c2, 0, len(c2))
+    for i in range(x_min, x_max):
+        res += search_in_y(i, a_y_min, a_y_max, a_z_min, a_z_max)
+    return res
+
+
+for i in range(min(len(min_angs), len(max_angs))):
+    print(search_in_x(min_angs[i][0], max_angs[i][0], min_angs[i][1], max_angs[i][1], min_angs[i][2], max_angs[i][2]))
+# a_x_min, a_x_max, a_y_min, a_y_max, a_z_min, a_z_max = 3, 50, 1, 48, 2, 95
+# print(search_in_x(a_x_min, a_x_max, a_y_min, a_y_max, a_z_min, a_z_max))
+
+
+# arr = [random.choice(range(1, 10)) for i in range(1, 10001)]
+# t = time.time()
+# print(arr[arr.index(42051)])
+# print(time.time() - t)
+#
+# print(arr[9999])
+# arr.sort()
+# print(arr)
+# print(arr)
+# t = time.time()
+# res = bin_search_from_to(0.2, 24.7, arr, 0, len(arr))
+# print(res)
+# print(arr[res[0]], arr[res[1]])
+# print(time.time() - t)
