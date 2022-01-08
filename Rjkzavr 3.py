@@ -51,9 +51,9 @@ def calculate(input_file):
     for spis in a:
         for pod_spis in spis:
             pod_spis.sort()
-    # print(a)
-    # print(b)
-    # print(c)
+    print(a)
+    print(b)
+    print(c)
     for u, v, w, r in input_file[len(points)+3:]:
         ocular_coord = (u, v, w)
         oc_l = (ocular_coord[0]*ocular_coord[0] + ocular_coord[1]*ocular_coord[1] + ocular_coord[2]*ocular_coord[2])**0.5
@@ -62,8 +62,9 @@ def calculate(input_file):
         ed_vec_oc = to_single(ocular_coord, oc_l)
         min_ang = tuple(map(lambda x: clamp_ang(x - first_cos), ed_vec_oc))
         max_ang = tuple(map(lambda x: clamp_ang(x + first_cos), ed_vec_oc))
-        # print('min_ang', *map(lambda x: clamp_ang(x + first_cos), ed_vec_oc))
-        # print('max_ang', *map(lambda x: clamp_ang(x - first_cos), ed_vec_oc))
+        print(f'{min_ang}\n{max_ang}')
+        # print(list(map(lambda x: clamp_ang(x + first_cos), ed_vec_oc)))
+        # print(list(map(lambda x: clamp_ang(x - first_cos), ed_vec_oc)))
 
         # for i in range(20):
         #     pass
