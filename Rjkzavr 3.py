@@ -19,7 +19,8 @@ def calculate(input_file):
     points = []
     for i in range(1, int(input_file[0][0]) + 1):
         a = input_file[i]
-        # print(*map(lambda x: degrees(acos(x)), to_single(a, get_len(a))))
+        # x = to_single(a, get_len(a))
+        # print(int(x[0]*10**5+10**6)*10**12+int(x[0]*10**5+10**6)*10**6+int(x[0]*10**5+10**6), x, sep='\n')
         points.append(to_single(a, get_len(a)))
     print()
     t_st = time()
@@ -51,3 +52,11 @@ def calculate(input_file):
 with open("input.txt", "r") as input_file:
     with open("output.txt", "w") as output_file:
         output_file.write(calculate(list(map(lambda l: list(map(float, l.split())), input_file.readlines()))))
+
+"""
+90 90 90
+89 80 70
+88 70 50
+87 60 30
+77 40 10
+"""
