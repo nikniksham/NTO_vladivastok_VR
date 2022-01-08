@@ -79,7 +79,7 @@ def search_in_y(ind, a_y_min, a_y_max, a_z_min, a_z_max):
 def search_in_x(a_x_min, a_x_max, a_y_min, a_y_max, a_z_min, a_z_max):
     res = 0
     x_min, x_max = bin_search_from_to(a_x_min, a_x_max, c, 0, len(c))
-    print(x_min, x_max)
+    # print(x_min, x_max)
     for i in range(x_min, x_max):
         res += search_in_y(i, a_y_min, a_y_max, a_z_min, a_z_max)
     return res
@@ -95,6 +95,7 @@ def get_single_angle(arr1, arr2):
 
 def clamp_ang(ang):
     if 1.0 >= ang >= -1.0:
+        # print('aaa')
         return ang
     elif ang > 1.0:
         return -2.0 + ang
@@ -138,10 +139,14 @@ def calculate(input_file):
         ocular_coord = (u, v, w)
         oc_l = (ocular_coord[0]*ocular_coord[0] + ocular_coord[1]*ocular_coord[1] + ocular_coord[2]*ocular_coord[2])**0.5
         hyp = (oc_l*oc_l + r*r)**0.5
-        first_cos = oc_l / hyp
+        print(hyp, r, oc_l)
+        first_cos = r / hyp
         ed_vec_oc = to_single(ocular_coord, oc_l)
-        min_ang = tuple(map(lambda x: clamp_ang(x - first_cos), ed_vec_oc))
-        max_ang = tuple(map(lambda x: clamp_ang(x + first_cos), ed_vec_oc))
+        min_ang = tuple(map(lambda x: x - first_cos, ed_vec_oc))
+        max_ang = tuple(map(lambda x: x + first_cos, ed_vec_oc))
+        print(first_cos)
+        print(ed_vec_oc)
+        print(*map(lambda x: x + first_cos, ed_vec_oc))
         print(min_ang)
         print(max_ang)
         print(search_in_x(min_ang[0], max_ang[0], min_ang[1], max_ang[1], min_ang[2], max_ang[2]))
