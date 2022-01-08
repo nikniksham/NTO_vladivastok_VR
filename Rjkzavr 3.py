@@ -11,8 +11,6 @@ def bin_search_from_to(min_n, max_n, arr, from_id, to_id):
     # print(arr)
     while True:
         mid_i = (min_i + max_i) // 2
-        # print(min_i, mid_i, max_i)
-        # input()
         if arr[mid_i] < min_n:
             min_i = mid_i
             # print(1)
@@ -22,7 +20,7 @@ def bin_search_from_to(min_n, max_n, arr, from_id, to_id):
                 b_b = min_i
                 break
             max_i = mid_i
-        if max_i - min_i == 1:
+        if max_i - min_i < 2:
             # print(2, arr[min_i], min_n)
             if arr[min_i] >= min_n:
                 b_b = min_i
@@ -46,7 +44,7 @@ def bin_search_from_to(min_n, max_n, arr, from_id, to_id):
                 t_b = max_i
                 break
             min_i = mid_i
-        if max_i - min_i == 1:
+        if max_i - min_i < 2:
             # print(2, "!!!!!!!!!!!!!!!!!!!!!1")
             # print(max_i, arr)
             if arr[max_i - 1] <= max_n:
@@ -60,9 +58,7 @@ def bin_search_from_to(min_n, max_n, arr, from_id, to_id):
 
 
 def search_in_z(ind1, ind2, a_z_min, a_z_max):
-    # print(a[ind1][ind2])
     z_min, z_max = bin_search_from_to(a_z_min, a_z_max, a[ind1][ind2], 0, len(a[ind1][ind2]))
-    # print(z_max - z_min + 1)
     return z_max - z_min + 1
 
 
