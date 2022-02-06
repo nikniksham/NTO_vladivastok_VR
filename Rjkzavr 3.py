@@ -1,3 +1,9 @@
+"""Мы разгадали секрет загадки, но было уже слишком поздно...
+
+Гадкие косинусы с их кривыми значениями :(
+"""
+
+
 from time import time
 t_st = time()
 a = []
@@ -128,24 +134,28 @@ def calculate(input_file):
     for spis in a:
         for pod_spis in spis:
             pod_spis.sort()
-    print(a)
-    print(b)
-    print(c)
+    # print(a)
+    # print(b)
+    # print(c)
     for u, v, w, r in input_file[len(points)+3:]:
         ocular_coord = (u, v, w)
         oc_l = (ocular_coord[0]*ocular_coord[0] + ocular_coord[1]*ocular_coord[1] + ocular_coord[2]*ocular_coord[2])**0.5
         hyp = (oc_l*oc_l + r*r)**0.5
-        print(hyp, r, oc_l)
+        # print(hyp, r, oc_l)
         first_cos = r / hyp
         ed_vec_oc = to_single(ocular_coord, oc_l)
         min_ang = tuple(map(lambda x: x - first_cos, ed_vec_oc))
         max_ang = tuple(map(lambda x: x + first_cos, ed_vec_oc))
-        print(first_cos)
-        print(ed_vec_oc)
-        print(*map(lambda x: x + first_cos, ed_vec_oc))
-        print(min_ang)
-        print(max_ang)
-        print(search_in_x(min_ang[0], max_ang[0], min_ang[1], max_ang[1], min_ang[2], max_ang[2]))
+        # print(first_cos)
+        # print(ed_vec_oc)
+        # print(*map(lambda x: x + first_cos, ed_vec_oc))
+        # print(min_ang)
+        # print(max_ang)
+
+        # print(search_in_x(min_ang[0], max_ang[0], min_ang[1], max_ang[1], min_ang[2], max_ang[2]))
+
+        result.append(str(search_in_x(min_ang[0], max_ang[0], min_ang[1], max_ang[1], min_ang[2], max_ang[2])))
+
         # print('min_ang', *map(lambda x: clamp_ang(x + first_cos), ed_vec_oc))
         # print('max_ang', *map(lambda x: clamp_ang(x - first_cos), ed_vec_oc))
 
@@ -170,31 +180,4 @@ with open("input.txt", "r") as input_file:
     with open("output.txt", "w") as output_file:
         output_file.write(calculate(list(map(lambda l: list(map(float, l.split())), input_file.readlines()))))
 
-print(time() - t_st)
-"""
-90 90 90
-89 80 70
-88 70 50
-87 60 30
-77 40 10
-
-
-a = [[[82, 87], [10, 15]], [[4, 16], [6, 12]], [[1, 89], [10, 20]]]
-b = [[12, 16], [59, 95], [10, 90]]
-c = [2, 5, 48]
-# [63.71019, 123.31286, 123.31286, 63.71019]
-"""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# print(time() - t_st)
